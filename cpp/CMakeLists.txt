@@ -1,0 +1,134 @@
+cmake_minimum_required (VERSION 3.1)
+project(FDCL-ONR-Data-Package)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set (CMAKE_CXX_STANDARD 17)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+find_package (PkgConfig REQUIRED)
+find_package(JetsonGPIO)
+
+link_directories("/usr/local/lib/")
+include_directories("/usr/local/include/")
+
+pkg_check_modules(LIBSERIALPORT libserialport)
+link_directories(${LIBSERIALPORT_LIBRARY_DIRS})
+include_directories(${LIBSERIALPORT_INCLUDE_DIRS})
+
+pkg_check_modules(GTKMM gtkmm-3.0)
+link_directories(${GTKMM_LIBRARY_DIRS})
+include_directories(${GTKMM_INCLUDE_DIRS})
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/eigen)
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/libsbp/c/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/vectornav/cpp/include)
+include_directories(${GTK3_INCLUDE_DIRS})
+
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/fdcl_save/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/fdcl_param/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/fdcl_serialization/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libraries/fdcl_clock/include)
+
+## Make Rover ##################################################################
+set(rover_src
+    src/main_rover.cpp
+)
+add_executable(rover ${rover_src})
+target_link_libraries(rover
+    rover_libs
+    Threads::Threads
+)
+target_compile_definitions(rover
+    PUBLIC FDCL_ROVER
+)
+target_compile_options(rover
+  PUBLIC -Wall -lrt -lm -lvrpn -lquat -pthread -lsbp -O3 -std=c++17
+)
+
+## Compile Rover libraries ##################################################
+set(rover_libs_src
+    ${PROJECT_SOURCE_DIR}/src/fdcl/system.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/wifi.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/fdcl/sensors/anemometer.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/sensors/vn100.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/sensors/swiftnav.cpp
+    
+    ${PROJECT_SOURCE_DIR}/src/fdcl/filters/butterworth.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/filters/low_pass.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_anemo1.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_anemo2.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_gps.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_rover_imu.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_key.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_wifi.cpp
+)
+add_library(rover_libs STATIC ${rover_libs_src})
+target_compile_definitions(rover_libs
+    PUBLIC FDCL_ROVER
+)
+target_link_libraries(rover_libs
+    PUBLIC sbp serialport fdcl_save fdcl_param fdcl_serial fdcl_clock libvncxx
+)
+
+
+## Make Base ##################################################################
+set(base_src
+    src/main_base.cpp
+)
+add_executable(base ${base_src})
+target_link_libraries(base
+    base_libs
+    Threads::Threads
+    ${GTKMM_LIBRARIES}
+)
+target_compile_definitions(base
+    PUBLIC FDCL_BASE
+)
+target_compile_options(base
+  PUBLIC -Wall -lrt -lm -lvrpn -lquat -pthread -lsbp -O3 -std=c++17 
+)
+
+## Compile Base libraries ##################################################
+set(base_libs_src
+    ${PROJECT_SOURCE_DIR}/src/fdcl/gui.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/system.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/wifi.cpp
+    
+    ${PROJECT_SOURCE_DIR}/src/fdcl/sensors/anemometer.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/sensors/swiftnav.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/sensors/vn100.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/fdcl/filters/butterworth.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/filters/low_pass.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_anemo1.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_base_imu.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_gps.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_gui.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_logging.cpp
+    ${PROJECT_SOURCE_DIR}/src/fdcl/threads/thread_wifi.cpp
+)
+add_library(base_libs STATIC ${base_libs_src})
+target_compile_definitions(base_libs
+    PUBLIC FDCL_BASE
+)
+target_include_directories(base_libs
+    PUBLIC 
+    ${GTKMM_INCLUDE_DIRS}
+)
+target_link_libraries(base_libs
+    PUBLIC sbp serialport fdcl_save fdcl_param fdcl_serial fdcl_clock libvncxx
+)
+
+
+## Compile FDCL libraries ######################################################
+add_subdirectory(${PROJECT_SOURCE_DIR}/../libraries/fdcl_save fdcl_save)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../libraries/fdcl_param fdcl_param)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../libraries/fdcl_serialization fdcl_serial)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../libraries/fdcl_clock fdcl_clock)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../libraries/vectornav/cpp libvncxx)

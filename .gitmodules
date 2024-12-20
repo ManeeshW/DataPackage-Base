@@ -1,0 +1,24 @@
+[submodule "post-processing/ezplot"]
+	path = post-processing/ezplot
+	url = git@github.com:kanishkegb/ezplot.git
+[submodule "libraries/fdcl_clock"]
+	path = libraries/fdcl_clock
+	url = https://github.com/fdcl-gwu/fdcl-clock.git
+[submodule "libraries/fdcl_serialization"]
+	path = libraries/fdcl_serialization
+	url = https://github.com/fdcl-gwu/fdcl_serialization.git
+[submodule "libraries/libsbp"]
+	path = libraries/libsbp
+	url = https://github.com/swift-nav/libsbp.git
+[submodule "libraries/fdcl_save"]
+	path = libraries/fdcl_save
+	url = https://github.com/fdcl-gwu/fdcl_save.git
+[submodule "libraries/fdcl_param"]
+	path = libraries/fdcl_param
+	url = https://github.com/fdcl-gwu/fdcl_param.git
+[submodule "libraries/eigen"]
+	path = libraries/eigen
+	url = https://github.com/fdcl-gwu/eigen.git
+[submodule "libraries/vectornav"]
+	path = libraries/vectornav
+	url = https://github.com/fdcl-gwu/vectornav.git

@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package fdcl;
+
+message Vector3 {
+  required float x = 1 [default = 0.0];
+  required float y = 2 [default = 0.0];
+  required float z = 3 [default = 0.0];
+}
+
+message Data {
+  required bool system_on = 1;
+  optional int32 t = 2;
+  optional float t_system = 3;
+  optional float t_imu = 4;
+  optional int32 freq_imu = 5;
+  optional Vector3 ypr = 6;
+  optional Vector3 a = 7;
+  optional Vector3 W = 8;
+  optional float temperature = 9;
+  optional float t_gps = 10;
+  optional int32 freq_gps = 11;
+  optional Vector3 rtk_x = 12;
+  optional Vector3 rtk_v = 13;
+  optional Vector3 llh = 14;
+  optional int32 status = 15;
+  optional int32 num_sats = 16;
+  optional int32 utc_seconds = 17;
+  optional int32 utc_nanos = 18;
+  optional float t_ane1 = 19;
+  optional int32 freq_ane1 = 20;
+  optional Vector3 uvw_ane1 = 21;
+  optional float temp_ane1 = 22;
+  optional float t_ane2 = 23;
+  optional int32 freq_ane2 = 24;
+  optional Vector3 uvw_ane2 = 25;
+  optional float temp_ane2 = 26;
+  optional float t_cam1 = 27;
+  optional int32 freq_cam1 = 28;
+  optional int32 idx_cam1 = 29;
+  optional float t_cam2 = 30;
+  optional int32 freq_cam2 = 31;
+  optional int32 idx_cam2 = 32;
+}
