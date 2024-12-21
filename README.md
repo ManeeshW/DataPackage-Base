@@ -3,13 +3,25 @@
 ## Dependencies (C++)
 ### Base
 ```sh
+sudo apt install python3-pip
 sudo apt install cmake libgtkmm-3.0-dev # if Linux base
+sudo apt install libserialport-dev
+
 brew install gtkmm3 pygobject3 # if Mac base
 ```
+
+##### Add your user to the dialout group:
+```sh
+sudo usermod -aG dialout $(whoami)
+groups
+```
+##### Log out and log back in (or reboot) for the changes to take effect.
 
 ### Rover
 ```sh
 sudo apt install cmake
+sudo apt install build-essential
+sudo apt install doxygen
 
 # SBP library
 cd libraries/libsbp/c
@@ -18,6 +30,21 @@ cd build
 cmake ../
 make
 sudo make install
+
+
+git clone --branch v2.7.4 https://github.com/swift-nav/libsbp.git
+git submodule update --init
+cd libsbp/
+git submodule update --init
+cd c/
+mkdir build
+cd build/
+cmake ../
+make
+sudo make install
+cd ..
+cd python/
+pip install .
 ```
 #### new update
 ```sh
@@ -56,7 +83,11 @@ pip3 install pandas
 pip3 install sbp
 
 conda install protobuf
+
 ```
+
+
+
 
 ### Rover
 ```sh

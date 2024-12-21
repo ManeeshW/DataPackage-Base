@@ -14,13 +14,13 @@ from gui import Gui
 from log import Log
 from wifi import WifiClient
 
-GPS_ON = False
+GPS_ON = True
 IMU_ON = True
 
 
 # These won't change, unless there is a hardware change.
-GPS_PORT = '/dev/ttyUSB1'
-IMU_PORT = '/dev/ttyUSB0'
+GPS_PORT = '/dev/ttyUSB0'
+IMU_PORT = '/dev/ttyUSB1'
 
 def main():
     print('MAIN: Starting rover')
